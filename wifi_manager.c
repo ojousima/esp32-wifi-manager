@@ -593,7 +593,7 @@ void wifi_manager( void * pvParameters ){
 	http_server_set_event_start();
 
 	/* start DNS server */
-	dns_server_start();
+	dns_server_set_event_start();
 
 
 	EventBits_t uxBits;

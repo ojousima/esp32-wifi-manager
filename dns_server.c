@@ -55,16 +55,23 @@ Contains the freeRTOS task for the DNS server that processes the requests.
 #include "dns_server.h"
 
 static const char TAG[] = "dns_server";
-static TaskHandle_t task_dns_server = NULL;
 
-void dns_server_start() {
-    xTaskCreate(&dns_server, "dns_server", 3072, NULL, 5, &task_dns_server);
+EventGroupHandle_t dns_server_event_group = NULL;
+EventBits_t uxBits;
+
+void dns_server_set_event_start(){
+    if(!dns_server_event_group) dns_server_event_group = xEventGroupCreate();
+    xEventGroupSetBits(dns_server_event_group, DNS_SERVER_START_BIT_0 );
 }
-
-
 
 void dns_server(void *pvParameters) {
 
+    if(!dns_server_event_group) dns_server_event_group = xEventGroupCreate();
+
+    /* do not start the task until wifi_manager says it's safe to do so! */
+    ESP_LOGD(TAG, "waiting for start bit");
+    uxBits = xEventGroupWaitBits(dns_server_event_group, DNS_SERVER_START_BIT_0, pdFALSE, pdTRUE, portMAX_DELAY );
+    ESP_LOGD(TAG, "received start bit, starting dns server");
 
     int socket_fd;
     struct sockaddr_in sa, ra;

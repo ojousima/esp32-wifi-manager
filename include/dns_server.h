@@ -45,6 +45,8 @@ extern "C" {
 /** Query + 2 byte ptr, 2 byte type, 2 byte class, 4 byte TTL, 2 byte len, 4 byte data */
 #define	DNS_ANSWER_MAX_SIZE (DNS_QUERY_MAX_SIZE+16)
 
+#define DNS_SERVER_START_BIT_0	( 1 << 0 )
+
 
 /**
  * @brief RCODE values used in a DNS header message
@@ -125,6 +127,7 @@ typedef struct __attribute__((__packed__)) dns_answer_t{
 
 void dns_server(void *pvParameters);
 void dns_server_start();
+void dns_server_set_event_start();
 
 
 

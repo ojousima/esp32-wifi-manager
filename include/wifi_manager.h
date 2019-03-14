@@ -147,6 +147,9 @@ extern "C" {
  */
 #define JSON_IP_INFO_SIZE 150
 
+/* Callback on connect/disconnect */
+typedef void (*wifi_on_connection_evt_cb_t)(void);
+
 
 
 typedef enum update_reason_code_t {
@@ -287,6 +290,12 @@ void wifi_manager_clear_access_points_json();
  * @brief Start the mDNS service
  */
 void wifi_manager_initialise_mdns();
+
+/**
+ * Callback functions to notify that WiFi has (dis-)connected
+ */
+void wifi_manager_set_on_connected(wifi_on_connection_evt_cb_t cb);
+void wifi_manager_set_on_disconnected(wifi_on_connection_evt_cb_t cb);
 
 #ifdef __cplusplus
 }

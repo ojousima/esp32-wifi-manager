@@ -61,6 +61,8 @@ wifi_ap_record_t *accessp_records;
 char *accessp_json = NULL;
 char *ip_info_json = NULL;
 wifi_config_t* wifi_manager_config_sta = NULL;
+wifi_on_connection_evt_cb_t wifi_on_connected = NULL;
+wifi_on_connection_evt_cb_t wifi_on_disconnected = NULL;
 
 /* @brief tag used for ESP serial console messages */
 static const char TAG[] = "wifi_manager";
@@ -113,6 +115,15 @@ void wifi_manager_disconnect_async(){
 	xEventGroupSetBits(wifi_manager_event_group, WIFI_MANAGER_REQUEST_WIFI_DISCONNECT);
 }
 
+void wifi_manager_set_on_connected(wifi_on_connection_evt_cb_t cb)
+{
+	wifi_on_connected = cb;
+}
+
+void wifi_manager_set_on_disconnected(wifi_on_connection_evt_cb_t cb)
+{
+	wifi_on_disconnected = cb;
+}
 
 esp_err_t wifi_manager_save_sta_config(){
 
@@ -361,11 +372,13 @@ esp_err_t wifi_manager_event_handler(void *ctx, system_event_t *event)
 
 	case SYSTEM_EVENT_STA_GOT_IP:
         xEventGroupSetBits(wifi_manager_event_group, WIFI_MANAGER_WIFI_CONNECTED_BIT);
+		if(wifi_on_connected) { wifi_on_connected(); }
         break;
 
 	case SYSTEM_EVENT_STA_DISCONNECTED:
 		xEventGroupSetBits(wifi_manager_event_group, WIFI_MANAGER_STA_DISCONNECT_BIT);
 		xEventGroupClearBits(wifi_manager_event_group, WIFI_MANAGER_WIFI_CONNECTED_BIT);
+		if(wifi_on_disconnected) { wifi_on_disconnected(); }
         break;
 
 	default:

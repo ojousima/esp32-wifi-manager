@@ -37,7 +37,7 @@ Contains the freeRTOS task and all necessary support
 extern "C" {
 #endif
 
-
+#include "esp_wifi.h"
 
 /**
  * @brief Defines the maximum size of a SSID name. 32 is IEEE standard.
